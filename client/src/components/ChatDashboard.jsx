@@ -5,6 +5,7 @@ import axios from "axios";
 function ChatDashboard() {
   const [uploadFile, setUploadFile] = useState(null);
   const [showSummary, setShowSummary] = useState("");
+  const [isLoading, setisLoading] = useState(false);
 
   const handleUploadChange = (e) => {
     console.log("target", e.target.files);
@@ -21,9 +22,9 @@ function ChatDashboard() {
   };
 
   const handleFileSummarizer = async () => {
+    setisLoading(true);
     const data = new FormData();
     data.append("file", uploadFile);
-    console.log("pdf file", uploadFile);
     const response = await axios.post(
       "http://localhost:8000/api/upload",
       data,
@@ -33,37 +34,45 @@ function ChatDashboard() {
         },
       }
     );
-    
+
     let parseData = new DOMParser();
     const documents = parseData.parseFromString(
       response.data.data,
       "text/html"
     );
-    documents.querySelector("h1").textContent;
-    documents.querySelector("h2").textContent;
-    documents.querySelector("h3").textContent;
-    documents.querySelector("p").textContent;
-    documents.querySelector("ul").textContent;
-    documents.querySelector("li").textContent;
-    setShowSummary(documents);
-
+    setisLoading(false);
+    let extractedData = documents.body.innerHTML;
+    setShowSummary(extractedData);
+    setUploadFile(null);
   };
 
   return (
     <div className="p-2">
       <div className="text-white h-full">
-        {showSummary ? (
-          <div className="showSummary" >{showSummary}</div>
-        ) : (
-          <div className="flex justify-center items-center flex-col w-full relative">
-            <img
-              className="max-w-[300px] max-h-[300px] "
-              src="../images/ai-bot-bg.png"
-              alt=""
+        {!isLoading ? (
+          showSummary ? (
+            <div
+              className="container showSummary"
+              dangerouslySetInnerHTML={{ __html: showSummary }}
             />
-            <p className="text-2xl">🗃️Just upload a file and get instant summary of your document ...</p>
-            <p className="text-xl">With lighting fast speed 💥</p>
-          </div>
+          ) : (
+            <div className="flex justify-center items-center flex-col w-full relative">
+              <img
+                className="max-w-[300px] max-h-[300px] "
+                src="../images/ai-bot-bg.png"
+                alt=""
+              />
+              <p className="text-2xl">
+                🗃️Just upload a file and get instant summary of your document
+                ...
+              </p>
+              <p className="text-xl">With lighting fast speed 💥</p>
+            </div>
+          )
+        ) : (
+          <p className="text-3xl font-semibold">
+            Brace yourself this is to fast...
+          </p>
         )}
 
         <div className="text-center upload_file">

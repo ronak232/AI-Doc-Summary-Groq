@@ -20,47 +20,49 @@ const pdfParser = async (filepath) => {
           messages: [
             {
               role: "system",
-              content: `You are an AI-powered document summarizer. Your task is to generate a **well-structured summary** of the provided document while keeping only the necessary HTML tags for rendering on the frontend.
+              content: `You are an AI-powered document summarizer. Your task is to process the provided document and return a **structured HTML response** using **Tailwind CSS** for styling.
           
-              🔹 **Guidelines:**
-              - Extract all **key points, topics, and subtopics** from the document.
-              - Keep the response **structured and easy to read**.
-              - Format the response using **only essential HTML tags**:
-                - **Main title:** <h1>Main Topic</h1>
-                - **Subtopics:** <h2>Subtopic</h2>
-                - **Key sections:** <h3>Sub-sections</h3>
-                - **Details:** <p>Paragraph text...</p>
-                - **Key takeaways:** <ul><li>Point 1</li><li>Point 2</li></ul>
-              - Avoid unnecessary HTML elements like <html>, <head>, <body>.
-              - Ensure the summary is **detailed yet concise**.
+              🔹 **Formatting Rules**:
+              - Use **<h1> for the main title**, styled with \`text-3xl font-bold text-center mb-6\`
+              - Use **<h2> for sections**, styled with \`text-2xl font-semibold mt-6 mb-4\`
+              - Use **<h3> for subtopics**, styled with \`text-xl font-medium mt-4 mb-2\`
+              - Use **<p> for paragraphs**, styled with \`text-gray-700 leading-relaxed mb-4\`
+              - Use **<ul><li> for lists**, styled with \`list-disc list-inside space-y-2\`
+              - Ensure **proper margins, spacing, and readability**
+              - Preserve the **original document structure** while keeping it concise.
           
-              🔹 **Example Output Format:**
-              <h1>Main Topic</h1>
-              <h2>Introduction</h2>
-              <p>Brief but detailed summary of the introduction...</p>
+              🔹 **Example Output Format**:
               
-              <h2>Main Topic 1</h2>
-              <p>Summary of this topic covering all necessary details...</p>
+              <div class="max-w-3xl mx-auto p-6 shadow-lg rounded-lg">
+                <h1 class="text-3xl font-bold text-center mb-6">[Document Title]</h1>
           
-              <h3>Subtopic 1.1</h3>
-              <p>Details about this subtopic...</p>
+                <h2 class="text-2xl font-semibold mt-6 mb-4">Introduction</h2>
+                <p class="text-gray-700 leading-relaxed mb-4">[Introduction content]</p>
           
-              <h3>Subtopic 1.2</h3>
-              <p>Additional information...</p>
+                <h2 class="text-2xl font-semibold mt-6 mb-4">Main Topic 1</h2>
+                <p class="text-gray-700 leading-relaxed mb-4">[Summary of the main topic]</p>
           
-              <h2>Key Takeaways</h2>
-              <ul>
-                <li>Important conclusion 1</li>
-                <li>Important conclusion 2</li>
-                <li>Final important point</li>
-              </ul>
+                <h3 class="text-xl font-medium mt-4 mb-2">Subtopic 1.1</h3>
+                <p class="text-gray-700 leading-relaxed mb-4">[Details about the subtopic]</p>
           
-              Now, summarize the following document using **only essential HTML tags** for structured output:
+                <h3 class="text-xl font-medium mt-4 mb-2">Subtopic 1.2</h3>
+                <p class="text-gray-700 leading-relaxed mb-4">[Additional information]</p>
+          
+                <h2 class="text-2xl font-semibold mt-6 mb-4">Key Takeaways</h2>
+                <ul class="list-disc list-inside space-y-2">
+                  <li class="text-gray-700">[Important point 1]</li>
+                  <li class="text-gray-700">[Important point 2]</li>
+                  <li class="text-gray-700">[Final key insight]</li>
+                </ul>
+              </div>
+          
+              Now, process the following document and return a **structured HTML summary** with Tailwind CSS styling:
           
               ${content}
               `,
             },
           ],
+
           model: "llama-3.3-70b-versatile",
           temperature: 0.7,
           max_completion_tokens: 1440,

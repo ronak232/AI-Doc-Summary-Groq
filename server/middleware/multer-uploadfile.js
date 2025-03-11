@@ -1,9 +1,15 @@
 import multer from "multer";
+import fs from "fs";
 import path from "path";
 
+const uploadPath = path.join("G:", "uploads", "temp");
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath, { recursive: true });
+}
+
 const storage = multer.diskStorage({
-  destination: (_, _f ,cb) => {
-    cb(null, "./upload/temp");
+  destination: (_, _f, cb) => {
+    cb(null, uploadPath);
   },
   filename: function (_, file, cb) {
     const ext = path.extname(file.originalname);
@@ -30,6 +36,7 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: fileFilter,
+  dest: "./uploads/temp",
 });
 
 export { upload };

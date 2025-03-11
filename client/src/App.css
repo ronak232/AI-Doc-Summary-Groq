@@ -5,3 +5,8 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+h1 {
+  font-size: 36px;
+  font-weight: 600;
+}
