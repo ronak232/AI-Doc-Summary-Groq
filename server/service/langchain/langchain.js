@@ -7,7 +7,6 @@ const groq = new Groq({
 });
 
 const pdfParser = async (filepath) => {
-  console.log('filepath', filepath);
   try {
     if (filepath) {
       const loader = new PDFLoader(filepath, {
@@ -21,27 +20,54 @@ const pdfParser = async (filepath) => {
           messages: [
             {
               role: "system",
-              content: `You are a ai summarizer who summarizes whole document ${content} with the below following points and give me the json format: 
-          1. Keep concise and relevant
-          2. Summarize the document or text provided by user in short and informational format.
-          4. Read the original work
-          5. Identify main points...
-          6. Structure your summary similarly to the original work.
-          7. Use simple language and avoid unnecessary words.
-          8. Break the text down into sections.
-          9. Identify and write down short key points in each section of provided docs.
-          10. Keep short and relevant`,
+              content: `You are an AI-powered document summarizer. Your task is to generate a **well-structured summary** of the provided document while keeping only the necessary HTML tags for rendering on the frontend.
+          
+              🔹 **Guidelines:**
+              - Extract all **key points, topics, and subtopics** from the document.
+              - Keep the response **structured and easy to read**.
+              - Format the response using **only essential HTML tags**:
+                - **Main title:** <h1>Main Topic</h1>
+                - **Subtopics:** <h2>Subtopic</h2>
+                - **Key sections:** <h3>Sub-sections</h3>
+                - **Details:** <p>Paragraph text...</p>
+                - **Key takeaways:** <ul><li>Point 1</li><li>Point 2</li></ul>
+              - Avoid unnecessary HTML elements like <html>, <head>, <body>.
+              - Ensure the summary is **detailed yet concise**.
+          
+              🔹 **Example Output Format:**
+              <h1>Main Topic</h1>
+              <h2>Introduction</h2>
+              <p>Brief but detailed summary of the introduction...</p>
+              
+              <h2>Main Topic 1</h2>
+              <p>Summary of this topic covering all necessary details...</p>
+          
+              <h3>Subtopic 1.1</h3>
+              <p>Details about this subtopic...</p>
+          
+              <h3>Subtopic 1.2</h3>
+              <p>Additional information...</p>
+          
+              <h2>Key Takeaways</h2>
+              <ul>
+                <li>Important conclusion 1</li>
+                <li>Important conclusion 2</li>
+                <li>Final important point</li>
+              </ul>
+          
+              Now, summarize the following document using **only essential HTML tags** for structured output:
+          
+              ${content}
+              `,
             },
           ],
           model: "llama-3.3-70b-versatile",
           temperature: 0.7,
           max_completion_tokens: 1440,
-          response_format: {
-            type: "json_object",
-          },
+          stream: false,
         })
         .withResponse();
-      return (await result).data.choices[0].message.content;
+      return (await result).data.choices[0].message.content.replace(/\\n/g, "");
     }
   } catch (error) {
     throw new Error("Enable to generate...");

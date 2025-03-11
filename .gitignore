@@ -3,3 +3,4 @@ dist-ssr
 *.local
 **/*.env
 node_modules
+upload/

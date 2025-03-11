@@ -4,17 +4,21 @@ export const handleDocumentParser = async (req, res) => {
   const file = req.file.path;
   try {
     if (!file) {
-      res.status(404).json({
+      return res.status(404).json({
         message: "Unknown path error...",
       });
     }
+    const data = await pdfParser(file);
+    console.log('data', data);
     fs.readFile(file, () => {
-      pdfParser(file);
-      res.status(200).json({
-        success: true,
-      });
+      if (data && data.length > 0) {
+       return res.status(200).json({
+          success: true,
+          data,
+        });
+      }
     });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error..." });
+    return res.status(500).json({ error: "Internal Server Error..." });
   }
 };

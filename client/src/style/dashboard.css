@@ -1,0 +1,70 @@
+.upload_file {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  font-size: 32px;
+}
+
+.upload_file .upload_file_options {
+  border: 1px solid rgba(84, 84, 84, 0.4);
+  border-radius: 8px;
+  max-height: 200px;
+  min-width: 550px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* File block container */
+.file-block {
+  width: 180px;
+  background: #374151; /* Tailwind gray-700 */
+  position: relative;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Close button */
+.close-button {
+  position: absolute;
+  top: -11px;
+  right: -8px;
+  width: 22px;
+  height: 21px;
+  border: none;
+  background: rgb(248 17 17 / 66%);
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3sease-in-out;
+}
+
+/* Hover effect */
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.2) rotate(180deg);
+}
+
+/* Click effect */
+.close-button:active {
+  transform: scale(1.1);
+}
+
+/* Close icon */
+.close-icon {
+  line-height: 0;
+}
