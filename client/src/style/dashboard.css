@@ -62,7 +62,28 @@
 }
 
 .showSummary {
-    max-width: 1320px;
-    margin: auto;
-    
+  max-width: 1320px;
+  margin: auto;
+}
+
+.dot-flashing {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 5px;
+  background-color: #3498db;
+  border-radius: 50%;
+  animation: dotFlashing 1.5s infinite linear;
+}
+
+@keyframes dotFlashing {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1;
+  }
 }
