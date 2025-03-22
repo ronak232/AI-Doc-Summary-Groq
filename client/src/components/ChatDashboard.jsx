@@ -11,9 +11,15 @@ function ChatDashboard() {
   const [error, setError] = useState(null);
 
   const handleUploadChange = (e) => {
-    if (e.target.files) {
-      setUploadFile(e.target.files[0]);
+    const file = e.target.files[0];
+    const extname = file.name.split(".").pop();
+    if (extname.includes(".mp3") || extname.includes(".wav")) {
+      const audio = URL.createObjectURL(file);
+      audio.src = audio;
+      setUploadFile(audio);
+      return;
     }
+    setUploadFile(file);
   };
 
   const removeSelectedFile = (e) => {

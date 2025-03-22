@@ -9,10 +9,24 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+async function audioSummarizer(file) {
+  const transcription = await groq.audio.transcriptions.create({
+    file: fs.createReadStream(file), 
+    model: "whisper-large-v3-turbo", // Required model to use for transcription
+    prompt: "You are an Smart AI-powered summarizer. Your task is to process and summarize the provided file based on the file length and return summary...", // Optional
+    language: "tr", // Optional
+    response_format: "json", // Optional
+    language: "en", // Optional
+    temperature: 0.3, // Optional
+  });
+  return extractDocContent(transcription.text);
+}
+
 const pdfParser = async (filepath) => {
   try {
     if (filepath) {
       const extname = path.extname(filepath);
+
       if (extname.includes(".txt") || extname.includes(".docx")) {
         const data = fs.readFileSync(filepath, "utf-8");
         const response = groq.chat.completions
@@ -74,13 +88,21 @@ const pdfParser = async (filepath) => {
           /\\n/g,
           ""
         );
-      } else {
+      }
+      if (extname.includes(".mp3") || extname.includes(".wav")) {
+        return audioSummarizer(filepath);
+      }
+      if (extname.includes(".pdf")) {
         const loader = new PDFLoader(filepath, {
           parsedItemSeparator: "",
         });
         const docs = await loader.load();
         const content = docs[0].pageContent;
         return extractDocContent(content);
+      } else {
+        throw new Error(
+          "Unsupported file type. Please upload a .txt, .docx, .pdf, or audio file."
+        );
       }
     }
   } catch (error) {
@@ -94,9 +116,7 @@ const extractDocContent = async (content) => {
       messages: [
         {
           role: "system",
-          content: `You are an AI-powered document summarizer. Your task is to process the provided document and return a **structured HTML response** using **Tailwind CSS** for styling.
-            
-          
+          content: `You are an AI-powered document summarizer. Your task is to process and summarize the provided document based on the document length and return a **structured HTML response** using **Tailwind CSS** for styling.
               🔹 **Formatting Rules**:
               - Use **<h1> for the main title**, styled with \`text-3xl font-bold text-center mb-6\`
               - Use **<h2> for sections**, styled with \`text-2xl font-semibold mt-6 mb-4\`
