@@ -2,12 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { createContext, useContext } from "react";
 export const FetchResponseContext = createContext();
 
-export function useFetch(userId) {
+export function useFetch(url) {
   const { getResponse } = useContext(FetchResponseContext);
   const { data, isLoading, isError } = useQuery(
     {
       queryKey: "fetch",
-      queryFn: getResponse(`/user/v1/${userId}`),
+      queryFn: getResponse(`${url}`),
     },
     {
       cacheTime: 10000,

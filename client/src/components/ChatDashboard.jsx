@@ -9,6 +9,8 @@ function ChatDashboard() {
   const [showSummary, setShowSummary] = useState("");
   const [isLoading, setisLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentDataId, setCurrentDataId] = useState(null);
+ 
 
   const handleUploadChange = (e) => {
     const file = e.target.files[0];
@@ -33,25 +35,28 @@ function ChatDashboard() {
     if (!uploadFile) return;
     setisLoading(true);
     try {
-      const data = new FormData();
-      data.append("file", uploadFile);
-      const response = await axios.post("/api/v1/upload", data, {
+      const formData = new FormData();
+      formData.append("file", uploadFile);
+    
+      const response = await axios.post("/api/v1/upload", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
-        },
+          "Content-Type":"multipart/form-data",
+        }
       });
 
+      console.log("response ", response.data);
+      const { fileId, data } = response.data;
       let parseData = new DOMParser();
-      const documents = parseData.parseFromString(
-        response.data.data,
-        "text/html"
-      );
+      const documents = parseData.parseFromString(data, "text/html");
       setisLoading(false);
       let extractedData = documents.body.innerHTML;
       setShowSummary(extractedData);
       setUploadFile("");
-    } catch {
+      setCurrentDataId(fileId);
+    } catch (error) {
       setError(true);
+      setUploadFile("");
+      console.error("debug error ", error.message);
       throw new Error("Unable to generate ");
     }
   };
@@ -78,6 +83,7 @@ function ChatDashboard() {
                   ...
                 </p>
                 <p className="text-xl">with lighting fast speed 💥</p>
+                <p>Allowed files (.pdf, .txt, .docx, .mp3, .wav)</p>
               </motion.div>
             )
           ) : (
@@ -122,7 +128,10 @@ function ChatDashboard() {
             <p className="text-2xl text-gray-300">Unable to generate...</p>
           </div>
         )}
-        <SummaryChat response={showSummary} />
+
+        {showSummary && (
+          <SummaryChat currentDataId={currentDataId} />
+        )}
         <div className="text-center upload_file">
           <div className="upload_file_options">
             {uploadFile && (
@@ -153,6 +162,7 @@ function ChatDashboard() {
                     height="24"
                     fill="none"
                     viewBox="0 0 24 24"
+                    title="Upload file"
                   >
                     <path
                       stroke="currentColor"

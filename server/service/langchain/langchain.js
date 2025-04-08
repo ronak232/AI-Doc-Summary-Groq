@@ -7,22 +7,23 @@ dotenv.config();
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
+  maxRetries: 2,
 });
 
-async function audioSummarizer(file) {
+const audioSummarizer = async (file) => {
   const transcription = await groq.audio.transcriptions.create({
-    file: fs.createReadStream(file), 
-    model: "whisper-large-v3-turbo", // Required model to use for transcription
-    prompt: "You are an Smart AI-powered summarizer. Your task is to process and summarize the provided file based on the file length and return summary...", // Optional
-    language: "tr", // Optional
-    response_format: "json", // Optional
-    language: "en", // Optional
-    temperature: 0.3, // Optional
+    file: fs.createReadStream(file),
+    model: "whisper-large-v3", // Required model to use for transcription
+    prompt:
+      "You are an Smart AI-powered summarizer. Your task is to process and summarize the provided audio file based on the file length...",
+    response_format: "text",
+    language: "en",
+    temperature: 0.3,
   });
-  return extractDocContent(transcription.text);
-}
+  return transcription.text.replace(/\\n/g, "");
+};
 
-const pdfParser = async (filepath) => {
+const fileParser = async (filepath) => {
   try {
     if (filepath) {
       const extname = path.extname(filepath);
@@ -167,4 +168,28 @@ const extractDocContent = async (content) => {
   return (await response).data.choices[0].message.content.replace(/\\n/g, "");
 };
 
-export { pdfParser };
+const userQueryQuestion = async (summary, query) => {
+  console.log("query ", query);
+
+  const response = groq.chat.completions.create({
+    messages: [
+      {
+        role: "assistant",
+        content: `You are an AI-powered assistatnt for user Query ${query}. Your task is to process and answer summary ${summary} related user query...
+        Few points to remember:
+        1. Remember previous context of the document and user query.
+        2. Answer if user have query related to previous query and answer
+      `,
+      },
+      {
+        role: "user",
+        content: `Answer the following question based on the document... ${query}`,
+      },
+    ],
+    model: "llama-3.3-70b-versatile",
+    temperature: 0.6,
+  });
+  return (await response).choices[0].message.content.replace(/\\n/g, "");
+};
+
+export { fileParser, userQueryQuestion };

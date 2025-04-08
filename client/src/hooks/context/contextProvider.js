@@ -14,7 +14,7 @@ export const useFetchData = ({ children }) => {
   };
 
   return (
-    <FetchResponseContext.Provider value={getResponse}>
+    <FetchResponseContext.Provider value={{getResponse}}>
       {children}
     </FetchResponseContext.Provider>
   );

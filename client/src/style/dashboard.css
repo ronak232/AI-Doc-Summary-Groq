@@ -64,6 +64,10 @@
 .showSummary {
   max-width: 1320px;
   margin: auto;
+  background: #ff84843d;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 10px 8px 31px rgba(0, 0, 0, 0.4);
 }
 
 .dot-flashing {
